@@ -4,9 +4,3 @@
 
 #include "Engine.h"
 
-UENUM(BlueprintType)
-enum class ETurnType : uint8
-{
-	TURN_Stationary  UMETA(DisplayName = "Stationary"),
-	TURN_Moving      UMETA(DisplayName = "Moving")
-};

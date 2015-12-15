@@ -10,8 +10,8 @@
 
 USquadronManager::USquadronManager()
 {
-	ForwardOffset = -50.0f;
-	HorizontalOffset = -50.0f;
+	ForwardOffset = -100.0f;
+	HorizontalOffset = 100.0f;
 
 	bShouldTick = false;
 
