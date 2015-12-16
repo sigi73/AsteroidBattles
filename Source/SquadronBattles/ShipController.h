@@ -4,6 +4,7 @@
 
 #include "GameFramework/PlayerController.h"
 #include "BaseShip.h"
+#include "BaseSpaceship.h"
 #include "ShipController.generated.h"
 
 /**
@@ -33,7 +34,7 @@ public:
 private:
 	bool bIsControllingShip;
 
-	ABaseShip* ControlledShip;
+	ABaseSpaceship* ControlledShip;
 
 	void AddThrust(float Magnitude);
 
