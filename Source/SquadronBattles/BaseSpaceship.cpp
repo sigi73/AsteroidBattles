@@ -15,6 +15,18 @@ ABaseSpaceship::ABaseSpaceship()
 
 	MAX_FORCE = 1.0f;
 	MAX_VELOCITY = 1.0f;
+
+	TargetLocation = FVector(0.0f, 0.0f, 0.0f);
+	DesiredVelocity = FVector(0.0f, 0.0f, 0.0f);
+	CurrentVelocity = FVector(0.0f, 0.0f, 0.0f);
+	Steering = FVector(0.0f, 0.0f, 0.0f);
+
+	ThrustIncrement = 1.0f;
+	MaxThrust = 10.0f;
+
+	PitchIncrement = 1.0f;
+	RollIncrement = 1.0f;
+	YawIncrement = 1.0f;
 }
 
 // Called when the game starts or when spawned
@@ -29,8 +41,6 @@ void ABaseSpaceship::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	//UE_LOG(LogTemp, Warning, TEXT("%s"), *TargetLocation.ToCompactString());
-
 	bIsAIControlled = false;
 
 	if (bIsAIControlled)
@@ -39,9 +49,9 @@ void ABaseSpaceship::Tick( float DeltaTime )
 	}
 	else
 	{
-		FRotationMatrix TurningRotator = FRotationMatrix(TargetRotation);
+		FVector RotatedVector = (GetActorRotation() + TargetRotation).Vector();
+		Steering = Seek(GetActorLocation() + RotatedVector * TargetThrust);
 		TargetRotation = FRotator::ZeroRotator;
-		Steering = Seek(TurningRotator.TransformVector(GetActorForwardVector()) * TargetThrust);
 	}
 
 	Steering = Truncate(Steering, MAX_FORCE);
@@ -68,8 +78,11 @@ FVector ABaseSpaceship::Truncate(FVector Value, float Max)
 
 FVector ABaseSpaceship::Seek(FVector Target)
 {
-	//DesiredVelocity = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target).Vector();
-	DesiredVelocity = Target - GetActorLocation();
+	if ((Target - GetActorLocation()).IsNearlyZero())
+		return FVector::ZeroVector;
+
+	DesiredVelocity = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target).Vector();
+	//DesiredVelocity = Target - GetActorLocation();
 	DesiredVelocity.Normalize();
 	DesiredVelocity *= MAX_VELOCITY;
 
@@ -98,6 +111,7 @@ void ABaseSpaceship::AddRoll(float Magnitude)
 void ABaseSpaceship::AddYaw(float Magnitude)
 {
 	TargetRotation.Yaw += Magnitude * YawIncrement;
+
 	if (Magnitude == 0.0f)
 		TargetRotation.Yaw = GetActorRotation().Yaw;
 }

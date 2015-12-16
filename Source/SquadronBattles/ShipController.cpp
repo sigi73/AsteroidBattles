@@ -22,7 +22,9 @@ AShipController::AShipController()
 void AShipController::BeginPlay()
 {
 	if (Cast<ABaseSpaceship>(GetPawn()))
+	{
 		ControlledShip = Cast<ABaseSpaceship>(GetPawn());
+	}
 }
 
 void AShipController::SetupInputComponent()
@@ -78,10 +80,14 @@ void AShipController::Tick(float Magnitude)
 
 
 		if (FMath::Abs(DeltaX) > MouseInputDelta)
+		{
 			AddYaw(DeltaX * MouseDeltaMultiplier);
+		}
 
 		if (FMath::Abs(DeltaY) > MouseInputDelta)
+		{
 			AddPitch(DeltaY * MouseDeltaMultiplier);
+		}
 	}
 }
 
