@@ -25,6 +25,10 @@ void AShipController::BeginPlay()
 	{
 		ControlledShip = Cast<ABaseSpaceship>(GetPawn());
 	}
+	else
+	{
+		ConsoleCommand("quit");
+	}
 }
 
 void AShipController::SetupInputComponent()

@@ -27,6 +27,8 @@ ABaseSpaceship::ABaseSpaceship()
 	PitchIncrement = 1.0f;
 	RollIncrement = 1.0f;
 	YawIncrement = 1.0f;
+
+	bIsAIControlled = false;
 }
 
 // Called when the game starts or when spawned
@@ -41,13 +43,14 @@ void ABaseSpaceship::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	bIsAIControlled = false;
+	
 
 	float DeltaRoll = 0.0f;
 
 	if (bIsAIControlled)
 	{
 		Steering = Seek(TargetLocation);
+		UE_LOG(LogTemp, Warning, TEXT("Seeking"));
 	}
 	else
 	{
@@ -66,7 +69,7 @@ void ABaseSpaceship::Tick( float DeltaTime )
 	SetActorLocation(GetActorLocation() + CurrentVelocity);
 
 	FRotator CurrentRotation = CurrentVelocity.Rotation();
-	CurrentRotation.Roll += DeltaRoll;
+	//CurrentRotation.Roll += DeltaRoll;
 
 	SetActorRotation(CurrentRotation);
 }
@@ -128,7 +131,7 @@ void ABaseSpaceship::AddThrust(float Magnitude)
 {
 	TargetThrust += Magnitude * ThrustIncrement;
 
-	TargetThrust = FMath::Clamp(TargetThrust, 0.0f, MaxThrust);
+	TargetThrust = FMath::Clamp(TargetThrust, -MaxThrust, MaxThrust);
 }
 
 bool ABaseSpaceship::CheckIsLeader()
@@ -139,7 +142,7 @@ bool ABaseSpaceship::CheckIsLeader()
 		return false;
 }
 
-FVector ABaseSpaceship::GetTargetLocation()
+FVector ABaseSpaceship::GetMovementTarget()
 {
 	return TargetLocation;
 }

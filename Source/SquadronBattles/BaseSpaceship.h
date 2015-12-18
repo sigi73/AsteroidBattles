@@ -71,8 +71,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Squadron")
 	bool CheckIsLeader();
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Movement")
-	FVector GetTargetLocation();
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	FVector GetMovementTarget();
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Movement")
 	FVector GetDesiredVelocity();
@@ -88,12 +88,12 @@ public:
 	void SetTargetLocation(FVector Target);
 
 
+	bool bIsAIControlled;
+
 private:
 	
 	FRotator TargetRotation;
 	float TargetThrust;
-
-	bool bIsAIControlled;
 
 
 	FVector Truncate(FVector Value, float Max);

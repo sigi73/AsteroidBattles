@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SquadronBattles.h"
-#include "BaseShip.h"
+#include "BaseSpaceship.h"
 #include "BaseAIShipController.h"
 #include "SquadronManager.h"
 
@@ -30,7 +30,7 @@ TStatId USquadronManager::GetStatId() const
 	return TStatId();
 }
 
-void USquadronManager::SetLeader(ABaseShip* NewLeader)
+void USquadronManager::SetLeader(ABaseSpaceship* NewLeader)
 {
 	Leader = NewLeader;
 }
@@ -47,7 +47,7 @@ void USquadronManager::Tick(float DeltaSeconds)
 
 	int i = 0;
 
-	for (ABaseShip* CurrentShip : SquadronShips)
+	for (ABaseSpaceship* CurrentShip : SquadronShips)
 	{
 		i++;
 		//UE_LOG(LogTemp, Warning, TEXT("Going through array"));

@@ -17,7 +17,18 @@ ABaseAIShipController::ABaseAIShipController()
 
 void ABaseAIShipController::BeginPlay()
 {
-	ControlledShip = Cast<ABaseSpaceship>(GetPawn());
+	if (Cast<ABaseSpaceship>(GetPawn()))
+	{
+		ControlledShip = Cast<ABaseSpaceship>(GetPawn());
+		UE_LOG(LogTemp, Warning, TEXT("Casting to pawn"));
+
+		ControlledShip->bIsAIControlled = true;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not Casting to pawn"));
+		GetWorld()->GetFirstPlayerController()->ConsoleCommand("quit");
+	}
 }
 
 /*

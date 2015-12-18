@@ -21,7 +21,7 @@ public:
 	virtual TStatId GetStatId() const override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Formations")
-	TArray<class ABaseShip*> SquadronShips;
+	TArray<class ABaseSpaceship*> SquadronShips;
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Formations")
@@ -31,11 +31,11 @@ public:
 	float HorizontalOffset;
 
 	UFUNCTION(BlueprintCallable, Category = "Formation")
-	void SetLeader(ABaseShip* NewLeader);
+	void SetLeader(ABaseSpaceship* NewLeader);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Test")
 	bool bShouldTick;
 
 private:
-	ABaseShip* Leader;
+	ABaseSpaceship* Leader;
 };
