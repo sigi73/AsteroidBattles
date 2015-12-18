@@ -43,6 +43,8 @@ void ABaseSpaceship::Tick( float DeltaTime )
 
 	bIsAIControlled = false;
 
+	float DeltaRoll = 0.0f;
+
 	if (bIsAIControlled)
 	{
 		Steering = Seek(TargetLocation);
@@ -50,6 +52,7 @@ void ABaseSpaceship::Tick( float DeltaTime )
 	else
 	{
 		FVector RotatedVector = (GetActorRotation() + TargetRotation).Vector();
+		DeltaRoll = TargetRotation.Roll;
 		Steering = Seek(GetActorLocation() + RotatedVector * TargetThrust);
 		TargetRotation = FRotator::ZeroRotator;
 	}
@@ -61,7 +64,11 @@ void ABaseSpaceship::Tick( float DeltaTime )
 	CurrentVelocity = Truncate(CurrentVelocity, MAX_VELOCITY);
 
 	SetActorLocation(GetActorLocation() + CurrentVelocity);
-	SetActorRotation(CurrentVelocity.Rotation());
+
+	FRotator CurrentRotation = CurrentVelocity.Rotation();
+	CurrentRotation.Roll += DeltaRoll;
+
+	SetActorRotation(CurrentRotation);
 }
 
 // Called to bind functionality to input
@@ -122,4 +129,38 @@ void ABaseSpaceship::AddThrust(float Magnitude)
 	TargetThrust += Magnitude * ThrustIncrement;
 
 	TargetThrust = FMath::Clamp(TargetThrust, 0.0f, MaxThrust);
+}
+
+bool ABaseSpaceship::CheckIsLeader()
+{
+	if (Leader->GetUniqueID() == GetUniqueID())
+		return true;
+	else
+		return false;
+}
+
+FVector ABaseSpaceship::GetTargetLocation()
+{
+	return TargetLocation;
+}
+
+FVector ABaseSpaceship::GetDesiredVelocity()
+{
+	return DesiredVelocity;
+}
+
+FVector ABaseSpaceship::GetCurrentVelocity()
+{
+	return CurrentVelocity;
+}
+
+FVector ABaseSpaceship::GetSteering()
+{
+	return Steering;
+}
+
+
+void ABaseSpaceship::SetTargetLocation(FVector Target)
+{
+	TargetLocation = Target;
 }

@@ -35,20 +35,6 @@ public:
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
-	FVector TargetLocation;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Debugging")
-	FVector DesiredVelocity;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Debugging")
-	FVector CurrentVelocity;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Debugging")
-	FVector Steering;
-
-
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
 	float PitchIncrement;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
@@ -56,6 +42,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
 	float YawIncrement;
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Squadron")
+	ABaseSpaceship* Leader;
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
@@ -77,6 +67,27 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void AddThrust(float Magnitude);
 
+
+	UFUNCTION(BlueprintCallable, Category = "Squadron")
+	bool CheckIsLeader();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Movement")
+	FVector GetTargetLocation();
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Movement")
+	FVector GetDesiredVelocity();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Movement")
+	FVector GetCurrentVelocity();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Movement")
+	FVector GetSteering();
+
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void SetTargetLocation(FVector Target);
+
+
 private:
 	
 	FRotator TargetRotation;
@@ -88,7 +99,10 @@ private:
 	FVector Truncate(FVector Value, float Max);
 	FVector Seek(FVector Target);
 
-	
+	FVector TargetLocation;
+	FVector DesiredVelocity;
+	FVector CurrentVelocity;
+	FVector Steering;
 	
 
 };

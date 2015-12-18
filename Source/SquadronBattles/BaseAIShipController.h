@@ -30,5 +30,5 @@ public:
 
 private:
 
-	class ABaseShip* ControlledShip;
+	class ABaseSpaceship* ControlledShip;
 };
