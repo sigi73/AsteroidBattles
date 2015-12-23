@@ -32,6 +32,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
 	float MAX_VELOCITY;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
+	float SLOWING_RADIUS;
+
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
@@ -98,6 +101,7 @@ private:
 
 	FVector Truncate(FVector Value, float Max);
 	FVector Seek(FVector Target);
+	FVector Arrive(FVector Target);
 
 	FVector TargetLocation;
 	FVector DesiredVelocity;

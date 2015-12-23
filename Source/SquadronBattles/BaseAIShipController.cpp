@@ -74,6 +74,8 @@ void ABaseAIShipController::Tick(float DeltaSeconds)
 	{
 		ControlledShip->SetTargetLocation(TargetLocation);
 
+		//UE_LOG(LogTemp, Warning, TEXT("Target Location : %s"), *TargetLocation.ToString());
+
 		float DistanceToTarget = FVector::Dist(TargetLocation, ControlledShip->GetActorLocation());
 
 		FColor PointColor;

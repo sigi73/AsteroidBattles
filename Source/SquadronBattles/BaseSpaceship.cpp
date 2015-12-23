@@ -15,6 +15,7 @@ ABaseSpaceship::ABaseSpaceship()
 
 	MAX_FORCE = 1.0f;
 	MAX_VELOCITY = 1.0f;
+	SLOWING_RADIUS = 10.0f;
 
 	TargetLocation = FVector(0.0f, 0.0f, 0.0f);
 	DesiredVelocity = FVector(0.0f, 0.0f, 0.0f);
@@ -49,14 +50,15 @@ void ABaseSpaceship::Tick( float DeltaTime )
 
 	if (bIsAIControlled)
 	{
-		Steering = Seek(TargetLocation);
-		UE_LOG(LogTemp, Warning, TEXT("Seeking"));
+		Steering = Arrive(TargetLocation);
+		//UE_LOG(LogTemp, Warning, TEXT("Seeking"));
 	}
 	else
 	{
 		FVector RotatedVector = (GetActorRotation() + TargetRotation).Vector();
 		DeltaRoll = TargetRotation.Roll;
 		Steering = Seek(GetActorLocation() + RotatedVector * TargetThrust);
+
 		TargetRotation = FRotator::ZeroRotator;
 	}
 
@@ -66,10 +68,24 @@ void ABaseSpaceship::Tick( float DeltaTime )
 	CurrentVelocity += Steering;
 	CurrentVelocity = Truncate(CurrentVelocity, MAX_VELOCITY);
 
+	//if (bIsAIControlled) UE_LOG(LogTemp, Warning, TEXT("CurrentVelocity: %s, %f"), *CurrentVelocity.ToString(), CurrentVelocity.Size());
+	if (CurrentVelocity.Size() < 1.0f)
+	{
+		//if (bIsAIControlled) UE_LOG(LogTemp, Warning, TEXT("Is Nearly 0"));
+		CurrentVelocity = FVector::ZeroVector;
+	}
+
 	SetActorLocation(GetActorLocation() + CurrentVelocity);
 
 	FRotator CurrentRotation = CurrentVelocity.Rotation();
 	//CurrentRotation.Roll += DeltaRoll;
+
+	/*
+	if (DeltaRoll != 0.0f)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Delta roll: %f"), DeltaRoll);
+	}
+	*/
 
 	SetActorRotation(CurrentRotation);
 }
@@ -83,7 +99,15 @@ void ABaseSpaceship::SetupPlayerInputComponent(class UInputComponent* InputCompo
 
 FVector ABaseSpaceship::Truncate(FVector Value, float Max)
 {
-	return (Value.Size() > Max) ? Value / Value.Size() * Max : Value;
+	//return (Value.Size() > Max) ? (Value.GetSafeNormal() * Max) : Value;
+	if (Value.Size() > Max)
+	{
+		return Value.GetSafeNormal() * Max;
+	}
+	else
+	{
+		return Value;
+	}
 }
 
 FVector ABaseSpaceship::Seek(FVector Target)
@@ -95,6 +119,29 @@ FVector ABaseSpaceship::Seek(FVector Target)
 	//DesiredVelocity = Target - GetActorLocation();
 	DesiredVelocity.Normalize();
 	DesiredVelocity *= MAX_VELOCITY;
+
+	FVector Force = DesiredVelocity - CurrentVelocity;
+
+	return Force;
+}
+
+FVector ABaseSpaceship::Arrive(FVector Target)
+{
+	if ((Target - GetActorLocation()).IsNearlyZero(5.0f))
+		return FVector::ZeroVector;
+
+	DesiredVelocity = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target).Vector();
+	float DistanceToTarget = DesiredVelocity.Size();
+	DesiredVelocity.Normalize();
+
+	if (DistanceToTarget < SLOWING_RADIUS)
+	{
+		DesiredVelocity *= (MAX_VELOCITY * (DistanceToTarget / SLOWING_RADIUS));
+	}
+	else
+	{
+		DesiredVelocity *= MAX_VELOCITY;
+	}
 
 	FVector Force = DesiredVelocity - CurrentVelocity;
 
