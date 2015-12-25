@@ -11,7 +11,7 @@
 USquadronManager::USquadronManager()
 {
 	ForwardOffset = -100.0f;
-	HorizontalOffset = 100.0f;
+	HorizontalOffset = 0.0f;
 
 	bShouldTick = false;
 

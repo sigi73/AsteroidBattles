@@ -2,6 +2,7 @@
 
 #include "SquadronBattles.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "UnrealNetwork.h"
 #include "BaseSpaceship.h"
 
 
@@ -12,6 +13,8 @@ ABaseSpaceship::ABaseSpaceship()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	bReplicates = true;
 
 	MAX_FORCE = 1.0f;
 	MAX_VELOCITY = 1.0f;
@@ -94,6 +97,20 @@ void ABaseSpaceship::Tick( float DeltaTime )
 void ABaseSpaceship::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 {
 	Super::SetupPlayerInputComponent(InputComponent);
+}
+
+
+void ABaseSpaceship::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ABaseSpaceship, Leader);
+	DOREPLIFETIME(ABaseSpaceship, TargetRotation);
+	DOREPLIFETIME(ABaseSpaceship, TargetThrust);
+	DOREPLIFETIME(ABaseSpaceship, TargetLocation);
+	DOREPLIFETIME(ABaseSpaceship, DesiredVelocity);
+	DOREPLIFETIME(ABaseSpaceship, CurrentVelocity);
+	DOREPLIFETIME(ABaseSpaceship, Steering);
 }
 
 
