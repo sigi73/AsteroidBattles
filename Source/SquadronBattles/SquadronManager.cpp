@@ -37,42 +37,45 @@ void USquadronManager::SetLeader(ABaseSpaceship* NewLeader)
 
 void USquadronManager::Tick(float DeltaSeconds)
 {
-	FVector LeaderLocation = Leader->GetActorLocation();
-	FRotator LeaderRotation = Leader->GetActorRotation();
-	FVector LeaderForward = Leader->GetActorForwardVector();
-	FVector LeaderRight = Leader->GetActorRightVector();
-	FVector CurrentOffset = FVector::ZeroVector;
-	float TotalForwardOffset = 0.0f;
-	float TotalHorizontalOffset = 0.0f;
-
-	int i = 0;
-
-	for (ABaseSpaceship* CurrentShip : SquadronShips)
+	if (Leader != NULL)
 	{
-		i++;
-		//UE_LOG(LogTemp, Warning, TEXT("Going through array"));
-		if (CurrentShip->GetUniqueID() == Leader->GetUniqueID())
-			continue;
+		FVector LeaderLocation = Leader->GetActorLocation();
+		FRotator LeaderRotation = Leader->GetActorRotation();
+		FVector LeaderForward = Leader->GetActorForwardVector();
+		FVector LeaderRight = Leader->GetActorRightVector();
+		FVector CurrentOffset = FVector::ZeroVector;
+		float TotalForwardOffset = 0.0f;
+		float TotalHorizontalOffset = 0.0f;
 
-		TotalForwardOffset += ForwardOffset;
-		TotalHorizontalOffset += HorizontalOffset;
+		int i = 0;
 
-		CurrentOffset += FVector(-ForwardOffset, HorizontalOffset, 0.0f);
-
-
-		ABaseAIShipController* CurrentController = Cast<ABaseAIShipController>(CurrentShip->GetController());
-		if (CurrentController != NULL)
+		for (ABaseSpaceship* CurrentShip : SquadronShips)
 		{
-			CurrentController->TargetLocation = LeaderLocation + (LeaderForward / LeaderForward.Size()) * TotalForwardOffset + (LeaderRight / LeaderRight.Size()) * TotalHorizontalOffset;
-			CurrentController->TargetRotation = LeaderRotation;
-			//UE_LOG(LogTemp, Warning, TEXT("Setting Locations"));
+			i++;
+			//UE_LOG(LogTemp, Warning, TEXT("Going through array"));
+			if (CurrentShip->GetUniqueID() == Leader->GetUniqueID())
+				continue;
+
+			TotalForwardOffset += ForwardOffset;
+			TotalHorizontalOffset += HorizontalOffset;
+
+			CurrentOffset += FVector(-ForwardOffset, HorizontalOffset, 0.0f);
+
+
+			ABaseAIShipController* CurrentController = Cast<ABaseAIShipController>(CurrentShip->GetController());
+			if (CurrentController != NULL)
+			{
+				CurrentController->TargetLocation = LeaderLocation + (LeaderForward / LeaderForward.Size()) * TotalForwardOffset + (LeaderRight / LeaderRight.Size()) * TotalHorizontalOffset;
+				CurrentController->TargetRotation = LeaderRotation;
+				//UE_LOG(LogTemp, Warning, TEXT("Setting Locations"));
+			}
+			else
+			{
+				//UE_LOG(LogTemp, Warning, TEXT("Controller is null"));
+			}
 		}
-		else
-		{
-			//UE_LOG(LogTemp, Warning, TEXT("Controller is null"));
-		}
+		//UE_LOG(LogTemp, Warning, TEXT("%d"), i);
 	}
-	//UE_LOG(LogTemp, Warning, TEXT("%d"), i);
 }
 
 

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "GameFramework/PlayerController.h"
-#include "BaseShip.h"
 #include "BaseSpaceship.h"
 #include "ShipController.generated.h"
 

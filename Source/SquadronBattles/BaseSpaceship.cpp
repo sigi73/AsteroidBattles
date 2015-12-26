@@ -38,8 +38,10 @@ ABaseSpaceship::ABaseSpaceship()
 // Called when the game starts or when spawned
 void ABaseSpaceship::BeginPlay()
 {
+	if (Leader == NULL)
+		Leader = this;
+
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
