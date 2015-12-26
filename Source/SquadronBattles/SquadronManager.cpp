@@ -5,9 +5,6 @@
 #include "BaseAIShipController.h"
 #include "SquadronManager.h"
 
-
-
-
 USquadronManager::USquadronManager()
 {
 	ForwardOffset = -100.0f;

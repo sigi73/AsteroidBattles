@@ -16,8 +16,10 @@ ABaseSpaceship::ABaseSpaceship()
 
 	bReplicates = true;
 
-	MAX_FORCE = 1.0f;
-	MAX_VELOCITY = 1.0f;
+	Mass = 10.0f;
+
+	MAX_FORCE = 10.0f;
+	MAX_VELOCITY = 10.0f;
 	SLOWING_RADIUS = 10.0f;
 
 	TargetLocation = FVector(0.0f, 0.0f, 0.0f);
@@ -28,11 +30,14 @@ ABaseSpaceship::ABaseSpaceship()
 	ThrustIncrement = 1.0f;
 	MaxThrust = 10.0f;
 
-	PitchIncrement = 1.0f;
-	RollIncrement = 1.0f;
-	YawIncrement = 1.0f;
+	PitchIncrement = 10.0f;
+	RollIncrement = 10.0f;
+	YawIncrement = 10.0f;
 
 	bIsAIControlled = false;
+
+	TargetThrust = 0.0f;
+	TargetRotation = FRotator::ZeroRotator;
 }
 
 // Called when the game starts or when spawned
@@ -49,8 +54,6 @@ void ABaseSpaceship::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	
-
 	float DeltaRoll = 0.0f;
 
 	if (bIsAIControlled)
@@ -62,6 +65,9 @@ void ABaseSpaceship::Tick( float DeltaTime )
 	{
 		FVector RotatedVector = (GetActorRotation() + TargetRotation).Vector();
 		DeltaRoll = TargetRotation.Roll;
+		if (CurrentVelocity == FVector::ZeroVector)
+			RotatedVector = GetActorRotation().Vector();
+		
 		Steering = Seek(GetActorLocation() + RotatedVector * TargetThrust);
 
 		TargetRotation = FRotator::ZeroRotator;
@@ -80,19 +86,15 @@ void ABaseSpaceship::Tick( float DeltaTime )
 		CurrentVelocity = FVector::ZeroVector;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("Current velocity: %s"), *CurrentVelocity.ToString());
+
 	SetActorLocation(GetActorLocation() + CurrentVelocity);
 
-	FRotator CurrentRotation = CurrentVelocity.Rotation();
-	//CurrentRotation.Roll += DeltaRoll;
-
-	/*
-	if (DeltaRoll != 0.0f)
+	if (CurrentVelocity != FVector::ZeroVector)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Delta roll: %f"), DeltaRoll);
+		FRotator CurrentRotation = CurrentVelocity.Rotation();
+		SetActorRotation(CurrentRotation);
 	}
-	*/
-
-	SetActorRotation(CurrentRotation);
 }
 
 // Called to bind functionality to input
@@ -101,7 +103,7 @@ void ABaseSpaceship::SetupPlayerInputComponent(class UInputComponent* InputCompo
 	Super::SetupPlayerInputComponent(InputComponent);
 }
 
-
+/*
 void ABaseSpaceship::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -114,6 +116,7 @@ void ABaseSpaceship::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLi
 	DOREPLIFETIME(ABaseSpaceship, CurrentVelocity);
 	DOREPLIFETIME(ABaseSpaceship, Steering);
 }
+*/
 
 
 FVector ABaseSpaceship::Truncate(FVector Value, float Max)
@@ -132,7 +135,10 @@ FVector ABaseSpaceship::Truncate(FVector Value, float Max)
 FVector ABaseSpaceship::Seek(FVector Target)
 {
 	if ((Target - GetActorLocation()).IsNearlyZero())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Seeking is nearly 0"));
 		return FVector::ZeroVector;
+	}
 
 	DesiredVelocity = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target).Vector();
 	//DesiredVelocity = Target - GetActorLocation();
@@ -172,6 +178,7 @@ FVector ABaseSpaceship::Arrive(FVector Target)
 void ABaseSpaceship::AddPitch(float Magnitude)
 {
 	TargetRotation.Pitch += Magnitude * PitchIncrement;
+	
 	if (Magnitude == 0.0f)
 		TargetRotation.Pitch = GetActorRotation().Pitch;
 }
@@ -179,7 +186,7 @@ void ABaseSpaceship::AddPitch(float Magnitude)
 void ABaseSpaceship::AddRoll(float Magnitude)
 {
 	TargetRotation.Roll += Magnitude * RollIncrement;
-
+	
 	if (Magnitude == 0.0f)
 		TargetRotation.Roll = GetActorRotation().Roll;
 }

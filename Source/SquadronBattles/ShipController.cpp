@@ -8,27 +8,23 @@
 
 AShipController::AShipController()
 {
+	PrimaryActorTick.bCanEverTick = true;
 	bShowMouseCursor = false;
 	bEnableMouseOverEvents = true;
 
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 
-	bIsControllingShip = true;
+	bIsControllingShip = false;
 
 	MouseDeltaMultiplier = 1.0f;
 	MouseInputDelta = 0.0f;
+
+	ControlledShip = NULL;
 }
 
 void AShipController::BeginPlay()
 {
-	if (Cast<ABaseSpaceship>(GetPawn()))
-	{
-		ControlledShip = Cast<ABaseSpaceship>(GetPawn());
-	}
-	else
-	{
-		ConsoleCommand("quit");
-	}
+	TakeControlOfShip();
 }
 
 void AShipController::SetupInputComponent()
@@ -43,6 +39,7 @@ void AShipController::AddThrust(float Magnitude)
 {
 	if (bIsControllingShip)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Adding thrust: %f"), Magnitude);
 		ControlledShip->AddThrust(Magnitude);
 	}
 }
@@ -73,12 +70,17 @@ void AShipController::AddYaw(float Magnitude)
 }
 
 
-void AShipController::Tick(float Magnitude)
+void AShipController::Tick(float DeltaSeconds)
 {
-	if (bIsControllingShip)
+	if (!bIsControllingShip)
 	{
-		float DeltaX;
-		float DeltaY;
+		TakeControlOfShip();
+		UE_LOG(LogTemp, Warning, TEXT("Ship found, ID: %s"), *GetName());
+	}
+	else
+	{
+		float DeltaX = 0.0f;
+		float DeltaY = 0.0f;
 
 		GetInputMouseDelta(DeltaX, DeltaY);
 
@@ -95,3 +97,12 @@ void AShipController::Tick(float Magnitude)
 	}
 }
 
+void AShipController::TakeControlOfShip()
+{
+	if (Cast<ABaseSpaceship>(GetPawn()))
+	{
+		ControlledShip = Cast<ABaseSpaceship>(GetPawn());
+		bIsControllingShip = true;
+		ControlledShip->bIsAIControlled = false;
+	}
+}

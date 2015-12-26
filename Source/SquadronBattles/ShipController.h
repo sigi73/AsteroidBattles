@@ -40,4 +40,6 @@ private:
 	void AddPitch(float Magnitude);
 	void AddRoll(float Magnitude);
 	void AddYaw(float Magnitude);
+
+	void TakeControlOfShip();
 };

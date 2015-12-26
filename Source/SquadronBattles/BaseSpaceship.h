@@ -23,7 +23,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifeTimeProps) const;
+	//void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifeTimeProps) const;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Properties")
 	float Mass;
@@ -49,7 +49,8 @@ public:
 	float YawIncrement;
 
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Squadron", Replicated)
+	//UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Squadron", Replicated)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Squadron")
 	ABaseSpaceship* Leader;
 
 
@@ -97,10 +98,10 @@ public:
 
 private:
 	
-	UPROPERTY(Replicated)
+	//UPROPERTY(Replicated)
 	FRotator TargetRotation;
 	
-	UPROPERTY(Replicated)
+	//UPROPERTY(Replicated)
 	float TargetThrust;
 
 
@@ -108,16 +109,16 @@ private:
 	FVector Seek(FVector Target);
 	FVector Arrive(FVector Target);
 
-	UPROPERTY(Replicated)
+	//UPROPERTY(Replicated)
 	FVector TargetLocation;
 	
-	UPROPERTY(Replicated)
+	//UPROPERTY(Replicated)
 	FVector DesiredVelocity;
 	
-	UPROPERTY(Replicated)
+	//UPROPERTY(Replicated)
 	FVector CurrentVelocity;
 	
-	UPROPERTY(Replicated)
+	//UPROPERTY(Replicated)
 	FVector Steering;
 	
 

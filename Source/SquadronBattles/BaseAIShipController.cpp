@@ -10,6 +10,7 @@
 
 ABaseAIShipController::ABaseAIShipController()
 {
+	PrimaryActorTick.bCanEverTick = true;
 	ThrustMultiplier = 0.25f;
 	TargetLocation = FVector::ZeroVector;
 	TargetRotation = FRotator::ZeroRotator;
@@ -27,7 +28,7 @@ void ABaseAIShipController::BeginPlay()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Not Casting to pawn"));
-		GetWorld()->GetFirstPlayerController()->ConsoleCommand("quit");
+		//GetWorld()->GetFirstPlayerController()->ConsoleCommand("quit");
 	}
 }
 
