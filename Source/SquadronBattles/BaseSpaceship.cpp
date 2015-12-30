@@ -46,6 +46,9 @@ void ABaseSpaceship::BeginPlay()
 	if (Leader == NULL)
 		Leader = this;
 
+	SetOwner(GetController());
+	//UE_LOG(LogTemp, Warning, TEXT("Owner: %s"), *GetOwner()->GetName());
+
 	Super::BeginPlay();
 }
 
@@ -54,20 +57,26 @@ void ABaseSpaceship::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	float DeltaRoll = 0.0f;
 
+	CalculateSteering();
+
+	SetCurrentVelocity();
+
+	MoveShip(CurrentVelocity);
+}
+
+void ABaseSpaceship::CalculateSteering()
+{
 	if (bIsAIControlled)
 	{
 		Steering = Arrive(TargetLocation);
-		//UE_LOG(LogTemp, Warning, TEXT("Seeking"));
 	}
 	else
 	{
 		FVector RotatedVector = (GetActorRotation() + TargetRotation).Vector();
-		DeltaRoll = TargetRotation.Roll;
 		if (CurrentVelocity == FVector::ZeroVector)
 			RotatedVector = GetActorRotation().Vector();
-		
+
 		Steering = Seek(GetActorLocation() + RotatedVector * TargetThrust);
 
 		TargetRotation = FRotator::ZeroRotator;
@@ -75,26 +84,44 @@ void ABaseSpaceship::Tick( float DeltaTime )
 
 	Steering = Truncate(Steering, MAX_FORCE);
 	Steering /= Mass;
+}
 
+void ABaseSpaceship::SetCurrentVelocity()
+{
 	CurrentVelocity += Steering;
 	CurrentVelocity = Truncate(CurrentVelocity, MAX_VELOCITY);
 
-	//if (bIsAIControlled) UE_LOG(LogTemp, Warning, TEXT("CurrentVelocity: %s, %f"), *CurrentVelocity.ToString(), CurrentVelocity.Size());
 	if (CurrentVelocity.Size() < 1.0f)
 	{
-		//if (bIsAIControlled) UE_LOG(LogTemp, Warning, TEXT("Is Nearly 0"));
 		CurrentVelocity = FVector::ZeroVector;
 	}
+}
 
-	UE_LOG(LogTemp, Warning, TEXT("Current velocity: %s"), *CurrentVelocity.ToString());
-
-	SetActorLocation(GetActorLocation() + CurrentVelocity);
-
-	if (CurrentVelocity != FVector::ZeroVector)
+void ABaseSpaceship::MoveShip(FVector InputVelocity)
+{
+	if (Role == ROLE_AutonomousProxy)
 	{
-		FRotator CurrentRotation = CurrentVelocity.Rotation();
+		UE_LOG(LogTemp, Warning, TEXT("Server move ship is being called"));
+		ServerMoveShip(InputVelocity);	
+	}
+
+	SetActorLocation(GetActorLocation() + InputVelocity);
+
+	if (InputVelocity != FVector::ZeroVector)
+	{
+		FRotator CurrentRotation = InputVelocity.Rotation();
 		SetActorRotation(CurrentRotation);
 	}
+}
+
+void ABaseSpaceship::ServerMoveShip_Implementation(FVector InputVelocity)
+{
+	MoveShip(InputVelocity);
+}
+
+bool ABaseSpaceship::ServerMoveShip_Validate(FVector InputVelocity)
+{
+	return true;
 }
 
 // Called to bind functionality to input
@@ -103,20 +130,14 @@ void ABaseSpaceship::SetupPlayerInputComponent(class UInputComponent* InputCompo
 	Super::SetupPlayerInputComponent(InputComponent);
 }
 
-/*
+
 void ABaseSpaceship::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ABaseSpaceship, Leader);
-	DOREPLIFETIME(ABaseSpaceship, TargetRotation);
-	DOREPLIFETIME(ABaseSpaceship, TargetThrust);
-	DOREPLIFETIME(ABaseSpaceship, TargetLocation);
-	DOREPLIFETIME(ABaseSpaceship, DesiredVelocity);
 	DOREPLIFETIME(ABaseSpaceship, CurrentVelocity);
-	DOREPLIFETIME(ABaseSpaceship, Steering);
 }
-*/
+
 
 
 FVector ABaseSpaceship::Truncate(FVector Value, float Max)
@@ -136,7 +157,6 @@ FVector ABaseSpaceship::Seek(FVector Target)
 {
 	if ((Target - GetActorLocation()).IsNearlyZero())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Seeking is nearly 0"));
 		return FVector::ZeroVector;
 	}
 

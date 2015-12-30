@@ -23,7 +23,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	//void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifeTimeProps) const;
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifeTimeProps) const;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Properties")
 	float Mass;
@@ -93,7 +93,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void SetTargetLocation(FVector Target);
 
-
+	//UPROPERTY(Replicated)
 	bool bIsAIControlled;
 
 private:
@@ -115,11 +115,20 @@ private:
 	//UPROPERTY(Replicated)
 	FVector DesiredVelocity;
 	
-	//UPROPERTY(Replicated)
+	UPROPERTY(Replicated)
 	FVector CurrentVelocity;
 	
 	//UPROPERTY(Replicated)
 	FVector Steering;
 	
 
+	void CalculateSteering();
+	void SetCurrentVelocity();
+	
+	void MoveShip(FVector InputVelocity);
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerMoveShip(FVector InputVelocity);
+	virtual void ServerMoveShip_Implementation(FVector InputVelocity);
+	virtual bool ServerMoveShip_Validate(FVector InputVelocity);
 };
