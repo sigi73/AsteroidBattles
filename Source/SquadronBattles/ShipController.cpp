@@ -35,6 +35,8 @@ void AShipController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
+	InputComponent->BindAction("Fire", IE_Pressed, this, &AShipController::FireWeapon);
+
 	InputComponent->BindAxis("Thrust", this, &AShipController::AddThrust);
 	InputComponent->BindAxis("Roll", this, &AShipController::AddRoll);
 }
@@ -133,4 +135,10 @@ void AShipController::TakeControlOfShip()
 
 		//ClientMessage(ControlledShip->GetOwner()->GetName());
 	}
+}
+
+void AShipController::FireWeapon()
+{
+	if (bIsControllingShip)
+		ControlledShip->FireWeapon();
 }

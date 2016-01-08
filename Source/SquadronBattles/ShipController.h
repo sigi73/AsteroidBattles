@@ -42,4 +42,6 @@ private:
 	void AddYaw(float Magnitude);
 
 	void TakeControlOfShip();
+
+	void FireWeapon();
 };

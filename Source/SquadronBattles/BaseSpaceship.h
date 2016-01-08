@@ -60,6 +60,18 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
 	float MaxThrust;
 
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
+	FVector FiringOffset;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
+	TSubclassOf<class ABaseProjectile>ProjectileClass;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
+	ABaseProjectile* LastMissleFired;
+
+
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void AddPitch(float Magnitude);
 
@@ -92,6 +104,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void SetTargetLocation(FVector Target);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void FireWeapon();
 
 	//UPROPERTY(Replicated)
 	bool bIsAIControlled;

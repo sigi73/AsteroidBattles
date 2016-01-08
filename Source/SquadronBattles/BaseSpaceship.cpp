@@ -3,6 +3,7 @@
 #include "SquadronBattles.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "UnrealNetwork.h"
+#include "BaseProjectile.h"
 #include "BaseSpaceship.h"
 
 
@@ -259,4 +260,25 @@ FVector ABaseSpaceship::GetSteering()
 void ABaseSpaceship::SetTargetLocation(FVector Target)
 {
 	TargetLocation = Target;
+}
+
+void ABaseSpaceship::FireWeapon()
+{
+	if (ProjectileClass != NULL)
+	{
+		UWorld* const World = GetWorld();
+		if (World)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = Instigator;
+
+			ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + FiringOffset, GetActorRotation(), SpawnParams);
+			if (Projectile)
+			{
+				Projectile->InitVelocity(GetActorForwardVector());
+				LastMissleFired = Projectile;
+			}
+		}
+	}
 }
