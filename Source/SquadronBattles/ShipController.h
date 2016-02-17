@@ -3,7 +3,7 @@
 #pragma once
 
 #include "GameFramework/PlayerController.h"
-#include "BaseSpaceship.h"
+#include "BaseShip.h"
 #include "ShipController.generated.h"
 
 /**
@@ -33,7 +33,7 @@ public:
 private:
 	bool bIsControllingShip;
 
-	ABaseSpaceship* ControlledShip;
+	ABaseShip* ControlledShip;
 
 	void AddThrust(float Magnitude);
 

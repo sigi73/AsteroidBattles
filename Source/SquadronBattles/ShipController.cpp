@@ -45,7 +45,7 @@ void AShipController::AddThrust(float Magnitude)
 {
 	if (bIsControllingShip)
 	{
-		ControlledShip->AddThrust(Magnitude);
+		ControlledShip->ThrustInput(Magnitude);
 	}
 }
 
@@ -54,7 +54,7 @@ void AShipController::AddPitch(float Magnitude)
 {
 	if (bIsControllingShip)
 	{
-		ControlledShip->AddPitch(Magnitude);
+		ControlledShip->VerticalInput(Magnitude);
 	}
 }
 
@@ -62,7 +62,7 @@ void AShipController::AddRoll(float Magnitude)
 {
 	if (bIsControllingShip)
 	{
-		ControlledShip->AddRoll(Magnitude);
+		ControlledShip->RollInput(Magnitude);
 	}
 }
 
@@ -70,15 +70,13 @@ void AShipController::AddYaw(float Magnitude)
 {
 	if (bIsControllingShip)
 	{
-		ControlledShip->AddYaw(Magnitude);
+		ControlledShip->HorizontalInput(Magnitude);
 	}
 }
 
 
 void AShipController::Tick(float DeltaSeconds)
 {
-	//ClientMessage(TEXT("Ticking"));
-	//ClientMessage(bIsControllingShip ? TEXT("true") : TEXT("false"));
 	if (!bIsControllingShip)
 	{
 		ClientMessage(TEXT("Not yet controlling ship"));
@@ -87,7 +85,6 @@ void AShipController::Tick(float DeltaSeconds)
 	}
 	else
 	{
-		//ControlledShip->SetOwner(this);
 		float DeltaX = 0.0f;
 		float DeltaY = 0.0f;
 
@@ -104,41 +101,20 @@ void AShipController::Tick(float DeltaSeconds)
 			AddPitch(DeltaY * MouseDeltaMultiplier);
 		}
 	}
-	FString RoleValue;
-	if (Role == ROLE_Authority)
-		RoleValue = "ROLE_Authority";
-	else if (Role == ROLE_AutonomousProxy)
-		RoleValue = "ROLE_AutonomousProxy";
-	else if (Role == ROLE_SimulatedProxy)
-		RoleValue = "Role_SimulatedProxy";
-	else
-		RoleValue = "None";
-
-
-	//UE_LOG(LogTemp, Warning, TEXT("Role: %s"), *RoleValue);
-	ClientMessage(RoleValue);
 }
 
 void AShipController::TakeControlOfShip()
 {
-	//ClientMessage(TEXT("Taking control of ship"));
-	//UE_LOG(LogTemp, Warning, TEXT("Taking control of ship"));
-	if (Cast<ABaseSpaceship>(GetPawn()))
+	if (Cast<ABaseShip>(GetPawn()))
 	{
-		//ClientMessage(TEXT("Cast succeeded"));
-		ControlledShip = Cast<ABaseSpaceship>(GetPawn());
-		//UE_LOG(LogTemp, Warning, TEXT("Pre bIsControllingShip: %s"), bIsControllingShip ? TEXT("true") : TEXT("false"));
+		ControlledShip = Cast<ABaseShip>(GetPawn());
 		bIsControllingShip = true;
-		//UE_LOG(LogTemp, Warning, TEXT("Post bIsControllingShip: %s"), bIsControllingShip ? TEXT("true") : TEXT("false"));
-		ControlledShip->bIsAIControlled = false;
-		ControlledShip->SetOwner(this);
-
-		//ClientMessage(ControlledShip->GetOwner()->GetName());
+		ControlledShip->SetOwner(this);		
 	}
 }
 
 void AShipController::FireWeapon()
 {
-	if (bIsControllingShip)
-		ControlledShip->FireWeapon();
+	//if (bIsControllingShip)
+		//ControlledShip->FireWeapon();
 }

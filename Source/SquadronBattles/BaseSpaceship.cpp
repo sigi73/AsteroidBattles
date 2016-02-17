@@ -106,7 +106,7 @@ void ABaseSpaceship::MoveShip(FVector InputVelocity)
 		ServerMoveShip(InputVelocity);	
 	}
 
-	SetActorLocation(GetActorLocation() + InputVelocity);
+	SetActorLocation(GetActorLocation() + InputVelocity, true);
 
 	if (InputVelocity != FVector::ZeroVector)
 	{
