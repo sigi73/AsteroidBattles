@@ -1,49 +1,32 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SquadronBattles.h"
+#include "BaseProjectile.h"
+#include "UnrealNetwork.h"
 #include "BaseShip.h"
 
 
 // Sets default values
 ABaseShip::ABaseShip()
 {
-	struct FConstructorStatics
-	{
-		ConstructorHelpers::FObjectFinderOptional<UStaticMesh> PlaneMesh;
-		FConstructorStatics()
-			: PlaneMesh(TEXT("/Game/LowPolyShip/lowPoly.lowPoly"))
-		{
-		}
-	};
-	static FConstructorStatics ConstructorStatics;
-
-	// Create static mesh component
-	PlaneMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlaneMesh0"));
-	PlaneMesh->SetStaticMesh(ConstructorStatics.PlaneMesh.Get());
-	RootComponent = PlaneMesh;
-
-	// Create a spring arm component
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm0"));
-	SpringArm->AttachTo(RootComponent);
-	SpringArm->TargetArmLength = 600.0f; // The camera follows at this distance behind the character	
-	SpringArm->SocketOffset = FVector(0.f, 0.f, 200.f);
-	SpringArm->bEnableCameraLag = false;
-	SpringArm->CameraLagSpeed = 15.f;
-
-	// Create camera component 
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera0"));
-	Camera->AttachTo(SpringArm, USpringArmComponent::SocketName);
-	Camera->bUsePawnControlRotation = false; // Don't rotate camera with controller
-
-
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	bReplicates = true;
+	bReplicateMovement = true;
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	Acceleration = 500.0f;
 	TurnSpeed = 150.0f;
 	MaxSpeed = 4000.0f;
-	MinSpeed = 500.0f;
-	CurrentForwardSpeed = 500.0f;
+	MinSpeed = 0.0f;
+	CurrentForwardSpeed = 0.0f;
+}
+
+void ABaseShip::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ABaseShip, CurrentForwardSpeed);
+	DOREPLIFETIME(ABaseShip, CurrentTurningSpeed);
 }
 
 // Called every frame
@@ -53,14 +36,32 @@ void ABaseShip::Tick(float DeltaSeconds)
 
 	const FVector LocalMove = FVector(CurrentForwardSpeed * DeltaSeconds, 0.0f, 0.0f);
 
-	AddActorLocalOffset(LocalMove, true);
-
 	FRotator DeltaRotation;
-	DeltaRotation.Pitch = CurrentPitchSpeed * DeltaSeconds;
-	DeltaRotation.Yaw = CurrentYawSpeed * DeltaSeconds;
-	DeltaRotation.Roll = CurrentRollSpeed * DeltaSeconds;
+	DeltaRotation.Pitch = CurrentTurningSpeed.Pitch * DeltaSeconds;
+	DeltaRotation.Yaw = CurrentTurningSpeed.Yaw * DeltaSeconds;
+	DeltaRotation.Roll = CurrentTurningSpeed.Roll *DeltaSeconds;
 
-	AddActorLocalRotation(DeltaRotation);
+	MoveShip(LocalMove, DeltaRotation);
+}
+
+void ABaseShip::MoveShip(FVector LocationOffset, FRotator RotationOffset)
+{
+	if (Role == ROLE_AutonomousProxy)
+	{
+		ServerMoveShip(LocationOffset, RotationOffset);
+	}
+	AddActorLocalOffset(LocationOffset, true);
+	AddActorLocalRotation(RotationOffset);
+}
+
+void ABaseShip::ServerMoveShip_Implementation(FVector LocationOffset, FRotator RotationOffset)
+{
+	MoveShip(LocationOffset, RotationOffset);
+}
+
+bool ABaseShip::ServerMoveShip_Validate(FVector LocationOffset, FRotator RotationOffset)
+{
+	return true;
 }
 
 void ABaseShip::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp,
@@ -91,11 +92,8 @@ void ABaseShip::VerticalInput(float Magnitude)
 	// Target pitch speed is based in input
 	float TargetPitchSpeed = (Magnitude * TurnSpeed);
 
-	// When steering, we decrease pitch slightly
-	//TargetPitchSpeed += (FMath::Abs(CurrentYawSpeed) * -0.2f);
-
 	// Smoothly interpolate to target pitch speed
-	CurrentPitchSpeed = FMath::FInterpTo(CurrentPitchSpeed, TargetPitchSpeed, GetWorld()->GetDeltaSeconds(), 2.0f);
+	CurrentTurningSpeed.Pitch = FMath::FInterpTo(CurrentTurningSpeed.Pitch, TargetPitchSpeed, GetWorld()->GetDeltaSeconds(), 2.0f);
 }
 
 void ABaseShip::HorizontalInput(float Magnitude)
@@ -104,23 +102,33 @@ void ABaseShip::HorizontalInput(float Magnitude)
 	float TargetYawSpeed = (Magnitude * TurnSpeed);
 
 	// Smoothly interpolate to target yaw speed
-	CurrentYawSpeed = FMath::FInterpTo(CurrentYawSpeed, TargetYawSpeed, GetWorld()->GetDeltaSeconds(), 2.0f);
-
-	// Is there any left/right input?
-	const bool bIsTurning = FMath::Abs(Magnitude) > 0.2f;
-
-	// If turning, yaw value is used to influence roll
-	// If not turning, roll to reverse current roll value
-	float TargetRollSpeed = bIsTurning ? (CurrentYawSpeed * 0.5f) : (GetActorRotation().Roll * -2.0f);
-	TargetRollSpeed = 0.0f;
-
-	// Smoothly interpolate roll speed
-	CurrentRollSpeed = FMath::FInterpTo(CurrentRollSpeed, TargetRollSpeed, GetWorld()->GetDeltaSeconds(), 2.0f);
+	CurrentTurningSpeed.Yaw = FMath::FInterpTo(CurrentTurningSpeed.Yaw, TargetYawSpeed, GetWorld()->GetDeltaSeconds(), 2.0f);
 }
 
 void ABaseShip::RollInput(float Magnitude)
 {
 	float TargetRollSpeed = (Magnitude * TurnSpeed);
 
-	CurrentRollSpeed = FMath::FInterpTo(CurrentRollSpeed, TargetRollSpeed, GetWorld()->GetDeltaSeconds(), 2.0f);
+	CurrentTurningSpeed.Roll = FMath::FInterpTo(CurrentTurningSpeed.Roll, TargetRollSpeed, GetWorld()->GetDeltaSeconds(), 2.0f);
+}
+
+
+void ABaseShip::FireWeapon()
+{
+	if (ProjectileClass != NULL)
+	{
+		UWorld* const World = GetWorld();
+		if (World)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = Instigator;
+
+			ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + FiringOffset, GetActorRotation(), SpawnParams);
+			if (Projectile)
+			{
+				Projectile->InitVelocity(GetActorForwardVector());
+			}
+		}
+	}
 }

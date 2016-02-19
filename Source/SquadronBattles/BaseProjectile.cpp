@@ -16,8 +16,9 @@ ABaseProjectile::ABaseProjectile(const FObjectInitializer &ObjectInitializer) : 
 	ProjectileMovement->InitialSpeed = 3000.f;
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
-	ProjectileMovement->bShouldBounce = true;
+	ProjectileMovement->bShouldBounce = false;
 	ProjectileMovement->Bounciness = 0.3f;
+	ProjectileMovement->ProjectileGravityScale = 0;
 }
 
 // Called when the game starts or when spawned

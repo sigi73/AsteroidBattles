@@ -10,22 +10,11 @@ class SQUADRONBATTLES_API ABaseShip : public APawn
 {
 	GENERATED_BODY()
 
-	/** StaticMesh component that will be the visuals for our flying pawn */
-	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* PlaneMesh;
-
-	/** Spring arm that will offset the camera */
-	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* SpringArm;
-
-	/** Camera component that will be our viewpoint */
-	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* Camera;
-
 public:
 	// Sets default values for this pawn's properties
 	ABaseShip();
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifeTimeProps) const;
 	
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
@@ -33,10 +22,19 @@ public:
 	virtual void NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal,
 		FVector NormalImpulse, const FHitResult& Hit) override;
 
+
 	void ThrustInput(float Magnitude);
 	void VerticalInput(float Magnitude);
 	void HorizontalInput(float Magnitude);
 	void RollInput(float Magnitude);
+
+	void FireWeapon();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
+	FVector FiringOffset;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
+	TSubclassOf<class ABaseProjectile>ProjectileClass;
 
 protected:
 	UPROPERTY(Category = "Movement", EditAnywhere)
@@ -51,11 +49,16 @@ protected:
 	UPROPERTY(Category = "Movement", EditAnywhere)
 	float MinSpeed;
 
+	UPROPERTY(Replicated)
 	float CurrentForwardSpeed;
+	UPROPERTY(Replicated)
+	FRotator CurrentTurningSpeed;
+	
+	void MoveShip(FVector LocationOffset, FRotator RotationOffset);
+	
 
-	float CurrentYawSpeed;
-	float CurrentPitchSpeed;
-	float CurrentRollSpeed;
-
-
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerMoveShip(FVector LocationOffset, FRotator RotationOffset);
+	virtual void ServerMoveShip_Implementation(FVector LocationOffset, FRotator RotationOffset);
+	virtual bool ServerMoveShip_Validate(FVector LocationOffset, FRotator RotationOffset);
 };
