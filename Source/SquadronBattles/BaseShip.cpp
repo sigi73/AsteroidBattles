@@ -124,7 +124,7 @@ void ABaseShip::FireWeapon()
 			SpawnParams.Owner = this;
 			SpawnParams.Instigator = Instigator;
 
-			ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + FiringOffset, GetActorRotation(), SpawnParams);
+			ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + GetActorForwardVector() * FiringOffset, GetActorRotation(), SpawnParams);
 			if (Projectile)
 			{
 				Projectile->InitVelocity(GetActorForwardVector());
