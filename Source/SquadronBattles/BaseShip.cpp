@@ -19,6 +19,7 @@ ABaseShip::ABaseShip()
 	MaxSpeed = 4000.0f;
 	MinSpeed = 0.0f;
 	CurrentForwardSpeed = 0.0f;
+	Health = 20;
 }
 
 void ABaseShip::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -131,4 +132,31 @@ void ABaseShip::FireWeapon()
 			}
 		}
 	}
+}
+
+void ABaseShip::RecieveDamage(float Amount)
+{
+	if (Role == ROLE_AutonomousProxy)
+	{
+		ServerRecieveDamage(Amount);
+	}
+
+	Health -= Amount;
+	if (Health <= 0)
+		DestroyShip();
+}
+
+void ABaseShip::ServerRecieveDamage_Implementation(float Amount)
+{
+	RecieveDamage(Amount);
+}
+
+bool ABaseShip::ServerRecieveDamage_Validate(float Amount)
+{
+	return true;
+}
+
+void ABaseShip::DestroyShip()
+{
+	UE_LOG(LogTemp, Warning, TEXT("DED"));
 }

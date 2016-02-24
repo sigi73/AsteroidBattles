@@ -36,6 +36,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
 	TSubclassOf<class ABaseProjectile>ProjectileClass;
 
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	void RecieveDamage(float Amount);
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerRecieveDamage(float Amount);
+	virtual void ServerRecieveDamage_Implementation(float Amount);
+	virtual bool ServerRecieveDamage_Validate(float Amount);
+
 protected:
 	UPROPERTY(Category = "Movement", EditAnywhere)
 	float Acceleration;
@@ -61,4 +69,9 @@ protected:
 	void ServerMoveShip(FVector LocationOffset, FRotator RotationOffset);
 	virtual void ServerMoveShip_Implementation(FVector LocationOffset, FRotator RotationOffset);
 	virtual bool ServerMoveShip_Validate(FVector LocationOffset, FRotator RotationOffset);
+
+	UPROPERTY(Category = "Ship", EditAnywhere)
+	float Health;
+
+	void DestroyShip();
 };
