@@ -68,9 +68,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
 	TSubclassOf<class ABaseProjectile>ProjectileClass;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
-	ABaseProjectile* LastMissleFired;
-
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void AddPitch(float Magnitude);
@@ -107,6 +104,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void FireWeapon();
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerFireWeapon();
+	virtual void ServerFireWeapon_Implementation();
+	virtual bool ServerFireWeapon_Validate();
 
 	//UPROPERTY(Replicated)
 	bool bIsAIControlled;

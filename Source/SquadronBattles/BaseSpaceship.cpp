@@ -264,21 +264,38 @@ void ABaseSpaceship::SetTargetLocation(FVector Target)
 
 void ABaseSpaceship::FireWeapon()
 {
-	if (ProjectileClass != NULL)
+	if (Role == ROLE_AutonomousProxy)
 	{
-		UWorld* const World = GetWorld();
-		if (World)
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			SpawnParams.Instigator = Instigator;
+		ServerFireWeapon();
+	}
+	else
+	{
 
-			ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + FiringOffset, GetActorRotation(), SpawnParams);
-			if (Projectile)
+		if (ProjectileClass != NULL)
+		{
+			UWorld* const World = GetWorld();
+			if (World)
 			{
-				Projectile->InitVelocity(GetActorForwardVector());
-				LastMissleFired = Projectile;
+				FActorSpawnParameters SpawnParams;
+				SpawnParams.Owner = this;
+				SpawnParams.Instigator = Instigator;
+
+				ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + FiringOffset, GetActorRotation(), SpawnParams);
+				if (Projectile)
+				{
+					Projectile->InitVelocity(GetActorForwardVector());
+				}
 			}
 		}
 	}
+}
+
+void ABaseSpaceship::ServerFireWeapon_Implementation()
+{
+	FireWeapon();
+}
+
+bool ABaseSpaceship::ServerFireWeapon_Validate()
+{
+	return false;
 }

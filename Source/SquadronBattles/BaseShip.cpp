@@ -116,22 +116,39 @@ void ABaseShip::RollInput(float Magnitude)
 
 void ABaseShip::FireWeapon()
 {
-	if (ProjectileClass != NULL)
+	if (Role == ROLE_AutonomousProxy)
 	{
-		UWorld* const World = GetWorld();
-		if (World)
+		ServerFireWeapon();
+	}
+	else
+	{
+		if (ProjectileClass != NULL)
 		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			SpawnParams.Instigator = Instigator;
-
-			ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + GetActorForwardVector() * FiringOffset, GetActorRotation(), SpawnParams);
-			if (Projectile)
+			UWorld* const World = GetWorld();
+			if (World)
 			{
-				Projectile->InitVelocity(GetActorForwardVector());
+				FActorSpawnParameters SpawnParams;
+				SpawnParams.Owner = this;
+				SpawnParams.Instigator = Instigator;
+
+				ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + GetActorForwardVector() * FiringOffset, GetActorRotation(), SpawnParams);
+				if (Projectile)
+				{
+					Projectile->InitVelocity(GetActorForwardVector());
+				}
 			}
 		}
 	}
+}
+
+void ABaseShip::ServerFireWeapon_Implementation()
+{
+	FireWeapon();
+}
+
+bool ABaseShip::ServerFireWeapon_Validate()
+{
+	return true;
 }
 
 void ABaseShip::RecieveDamage(float Amount)
@@ -142,8 +159,8 @@ void ABaseShip::RecieveDamage(float Amount)
 	}
 
 	Health -= Amount;
-	if (Health <= 0)
-		DestroyShip();
+	//if (Health <= 0)
+		//DestroyShip();
 }
 
 void ABaseShip::ServerRecieveDamage_Implementation(float Amount)
@@ -154,9 +171,4 @@ void ABaseShip::ServerRecieveDamage_Implementation(float Amount)
 bool ABaseShip::ServerRecieveDamage_Validate(float Amount)
 {
 	return true;
-}
-
-void ABaseShip::DestroyShip()
-{
-	UE_LOG(LogTemp, Warning, TEXT("DED"));
 }

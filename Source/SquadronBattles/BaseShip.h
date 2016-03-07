@@ -28,13 +28,22 @@ public:
 	void HorizontalInput(float Magnitude);
 	void RollInput(float Magnitude);
 
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void FireWeapon();
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerFireWeapon();
+	virtual void ServerFireWeapon_Implementation();
+	virtual bool ServerFireWeapon_Validate();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
 	float FiringOffset;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
 	TSubclassOf<class ABaseProjectile>ProjectileClass;
+
+
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void RecieveDamage(float Amount);
@@ -72,6 +81,4 @@ protected:
 
 	UPROPERTY(Category = "Ship", EditAnywhere)
 	float Health;
-
-	void DestroyShip();
 };
