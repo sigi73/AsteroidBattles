@@ -28,6 +28,7 @@ void ABaseShip::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetim
 
 	DOREPLIFETIME(ABaseShip, CurrentForwardSpeed);
 	DOREPLIFETIME(ABaseShip, CurrentTurningSpeed);
+	DOREPLIFETIME(ABaseShip, Health);
 }
 
 // Called every frame
@@ -151,24 +152,28 @@ bool ABaseShip::ServerFireWeapon_Validate()
 	return true;
 }
 
-void ABaseShip::RecieveDamage(float Amount)
+
+void ABaseShip::ApplyDamage(float Amount)
 {
 	if (Role == ROLE_AutonomousProxy)
 	{
-		ServerRecieveDamage(Amount);
+		ServerApplyDamage(Amount);
 	}
-
-	Health -= Amount;
-	//if (Health <= 0)
+	else
+	{
+		Health -= Amount;
+		UE_LOG(LogTemp, Warning, TEXT("Applying damage"));
+		//if (Health <= 0)
 		//DestroyShip();
+	}
 }
 
-void ABaseShip::ServerRecieveDamage_Implementation(float Amount)
+void ABaseShip::ServerApplyDamage_Implementation(float Amount)
 {
-	RecieveDamage(Amount);
+	ApplyDamage(Amount);
 }
 
-bool ABaseShip::ServerRecieveDamage_Validate(float Amount)
+bool ABaseShip::ServerApplyDamage_Validate(float Amount)
 {
 	return true;
 }

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Pawn.h"
+#include "Damageable.h"
 #include "BaseShip.generated.h"
 
 UCLASS()
@@ -45,13 +46,13 @@ public:
 
 
 
-	UFUNCTION(BlueprintCallable, Category = "Damage")
-	void RecieveDamage(float Amount);
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void ApplyDamage(float Amount);
 
 	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerRecieveDamage(float Amount);
-	virtual void ServerRecieveDamage_Implementation(float Amount);
-	virtual bool ServerRecieveDamage_Validate(float Amount);
+	void ServerApplyDamage(float Amount);
+	virtual void ServerApplyDamage_Implementation(float Amount);
+	virtual bool ServerApplyDamage_Validate(float Amount);
 
 protected:
 	UPROPERTY(Category = "Movement", EditAnywhere)
@@ -71,14 +72,15 @@ protected:
 	UPROPERTY(Replicated)
 	FRotator CurrentTurningSpeed;
 	
+
+
 	void MoveShip(FVector LocationOffset, FRotator RotationOffset);
 	
-
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerMoveShip(FVector LocationOffset, FRotator RotationOffset);
 	virtual void ServerMoveShip_Implementation(FVector LocationOffset, FRotator RotationOffset);
 	virtual bool ServerMoveShip_Validate(FVector LocationOffset, FRotator RotationOffset);
 
-	UPROPERTY(Category = "Ship", EditAnywhere)
+	UPROPERTY(Category = "Ship", EditAnywhere, Replicated)
 	float Health;
 };
