@@ -7,7 +7,7 @@
 /**
  * 
  */
-UINTERFACE(MinimalAPI)
+UINTERFACE(Blueprintable, meta=(CannotImplementInterfaceInBlueprint))
 class UDamageable : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
@@ -19,11 +19,11 @@ class SQUADRONBATTLES_API IDamageable
 
 	public:
 	
-	/*UFUNCTION(BlueprintCallable, Category = "Weapon")
-	virtual void ApplyDamage(float Amount);
+	UFUNCTION(BlueprintCallable, Category = "Stuff and things")
+	void ApplyDamage(float Amount);
 
-	UFUNCTION(Reliable, Server, WithValidation)
-	virtual void ServerApplyDamage(float Amount);
-	virtual void ServerApplyDamage_Implementation(float Amount);
-	virtual bool ServerApplyDamage_Validate(float Amount);*/
+	UFUNCTION(BlueprintCallable, Reliable, Server, WithValidation, Category = "Stuff and things")
+	void ServerApplyDamage(float Amount);
+	void ServerApplyDamage_Implementation(float Amount);
+	bool ServerApplyDamage_Validate(float Amount);
 };

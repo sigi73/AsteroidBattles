@@ -7,7 +7,7 @@
 #include "BaseShip.generated.h"
 
 UCLASS()
-class SQUADRONBATTLES_API ABaseShip : public APawn
+class SQUADRONBATTLES_API ABaseShip : public APawn, public IDamageable
 {
 	GENERATED_BODY()
 

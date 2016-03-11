@@ -7,3 +7,23 @@ UDamageable::UDamageable(const class FObjectInitializer& ObjectInitializer) : Su
 {
 
 }
+
+void IDamageable::ApplyDamage(float Amount)
+{
+
+}
+
+void IDamageable::ServerApplyDamage(float Amount)
+{
+
+}
+
+void IDamageable::ServerApplyDamage_Implementation(float Amount)
+{
+
+}
+
+bool IDamageable::ServerApplyDamage_Validate(float Amount)
+{
+	return true;
+}
