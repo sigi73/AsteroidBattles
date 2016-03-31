@@ -46,13 +46,14 @@ public:
 
 
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void ApplyDamage(float Amount);
+	
+	virtual void ApplyDamage_Implementation(float Amount) override;
 
-	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerApplyDamage(float Amount);
-	virtual void ServerApplyDamage_Implementation(float Amount);
-	virtual bool ServerApplyDamage_Validate(float Amount);
+	/*
+	void ServerApplyDamage(float Amount) override;
+	virtual void ServerApplyDamage_Implementation(float Amount) override;
+	virtual bool ServerApplyDamage_Validate(float Amount) override;
+	*/
 
 protected:
 	UPROPERTY(Category = "Movement", EditAnywhere)

@@ -7,23 +7,19 @@
 /**
  * 
  */
-UINTERFACE(Blueprintable, meta=(CannotImplementInterfaceInBlueprint))
+//UINTERFACE(Blueprintable, meta=(CannotImplementInterfaceInBlueprint))
+UINTERFACE(Blueprintable, MinimalAPI)
 class UDamageable : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class SQUADRONBATTLES_API IDamageable
+class IDamageable
 {
 	GENERATED_IINTERFACE_BODY()
 
-	public:
-	
-	UFUNCTION(BlueprintCallable, Category = "Stuff and things")
-	void ApplyDamage(float Amount);
+public:
 
-	UFUNCTION(BlueprintCallable, Reliable, Server, WithValidation, Category = "Stuff and things")
-	void ServerApplyDamage(float Amount);
-	void ServerApplyDamage_Implementation(float Amount);
-	bool ServerApplyDamage_Validate(float Amount);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Testing")
+	void ApplyDamage(float Amount);
 };

@@ -153,8 +153,9 @@ bool ABaseShip::ServerFireWeapon_Validate()
 }
 
 
-void ABaseShip::ApplyDamage(float Amount)
+void ABaseShip::ApplyDamage_Implementation(float Amount)
 {
+	/*
 	if (Role == ROLE_AutonomousProxy)
 	{
 		ServerApplyDamage(Amount);
@@ -165,9 +166,10 @@ void ABaseShip::ApplyDamage(float Amount)
 		UE_LOG(LogTemp, Warning, TEXT("Applying damage"));
 		//if (Health <= 0)
 		//DestroyShip();
-	}
+	}*/
+	UE_LOG(LogTemp, Warning, TEXT("Applying damage"));
 }
-
+/*
 void ABaseShip::ServerApplyDamage_Implementation(float Amount)
 {
 	ApplyDamage(Amount);
@@ -177,3 +179,4 @@ bool ABaseShip::ServerApplyDamage_Validate(float Amount)
 {
 	return true;
 }
+*/
