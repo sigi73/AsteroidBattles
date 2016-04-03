@@ -20,6 +20,6 @@ class IDamageable
 
 public:
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Testing")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Damage")
 	void ApplyDamage(float Amount);
 };

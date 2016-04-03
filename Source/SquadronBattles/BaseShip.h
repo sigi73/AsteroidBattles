@@ -49,11 +49,12 @@ public:
 	
 	virtual void ApplyDamage_Implementation(float Amount) override;
 
-	/*
-	void ServerApplyDamage(float Amount) override;
-	virtual void ServerApplyDamage_Implementation(float Amount) override;
-	virtual bool ServerApplyDamage_Validate(float Amount) override;
-	*/
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerApplyDamage(float Amount);
+	virtual void ServerApplyDamage_Implementation(float Amount);
+	virtual bool ServerApplyDamage_Validate(float Amount);
+	
+	
 
 protected:
 	UPROPERTY(Category = "Movement", EditAnywhere)
@@ -82,6 +83,6 @@ protected:
 	virtual void ServerMoveShip_Implementation(FVector LocationOffset, FRotator RotationOffset);
 	virtual bool ServerMoveShip_Validate(FVector LocationOffset, FRotator RotationOffset);
 
-	UPROPERTY(Category = "Ship", EditAnywhere, Replicated)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Ship")
 	float Health;
 };

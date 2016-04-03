@@ -25,5 +25,4 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
 	UProjectileMovementComponent* ProjectileMovement;
-	
 };

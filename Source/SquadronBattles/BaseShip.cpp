@@ -132,7 +132,7 @@ void ABaseShip::FireWeapon()
 				SpawnParams.Owner = this;
 				SpawnParams.Instigator = Instigator;
 
-				ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + GetActorForwardVector() * FiringOffset, GetActorRotation(), SpawnParams);
+				ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + GetActorForwardVector() * FiringOffset, GetActorForwardVector().Rotation(), SpawnParams);
 				if (Projectile)
 				{
 					Projectile->InitVelocity(GetActorForwardVector());
@@ -155,28 +155,36 @@ bool ABaseShip::ServerFireWeapon_Validate()
 
 void ABaseShip::ApplyDamage_Implementation(float Amount)
 {
-	/*
-	if (Role == ROLE_AutonomousProxy)
+	if (Role < ROLE_Authority)
 	{
 		ServerApplyDamage(Amount);
 	}
 	else
 	{
+		APlayerController* OwnController = Cast<APlayerController>(GetController());
+
+		if (OwnController)
+		{
+			OwnController->ClientMessage("Getting hit");
+		}
+		
 		Health -= Amount;
-		UE_LOG(LogTemp, Warning, TEXT("Applying damage"));
-		//if (Health <= 0)
-		//DestroyShip();
-	}*/
-	UE_LOG(LogTemp, Warning, TEXT("Applying damage"));
+		UE_LOG(LogTemp, Warning, TEXT("Applying damage: %f"), Health);
+		if (Health <= 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Me ded"));
+		}
+		
+	}
+	
 }
-/*
+
 void ABaseShip::ServerApplyDamage_Implementation(float Amount)
 {
-	ApplyDamage(Amount);
+	Execute_ApplyDamage(this, Amount);
 }
 
 bool ABaseShip::ServerApplyDamage_Validate(float Amount)
 {
 	return true;
 }
-*/
