@@ -115,36 +115,25 @@ void ABaseShip::RollInput(float Magnitude)
 }
 
 
-void ABaseShip::FireWeapon()
-{
-	if (Role == ROLE_AutonomousProxy)
-	{
-		ServerFireWeapon();
-	}
-	else
-	{
-		if (ProjectileClass != NULL)
-		{
-			UWorld* const World = GetWorld();
-			if (World)
-			{
-				FActorSpawnParameters SpawnParams;
-				SpawnParams.Owner = this;
-				SpawnParams.Instigator = Instigator;
-
-				ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + GetActorForwardVector() * FiringOffset, GetActorForwardVector().Rotation(), SpawnParams);
-				if (Projectile)
-				{
-					Projectile->InitVelocity(GetActorForwardVector());
-				}
-			}
-		}
-	}
-}
 
 void ABaseShip::ServerFireWeapon_Implementation()
 {
-	FireWeapon();
+	if (ProjectileClass != NULL)
+	{
+		UWorld* const World = GetWorld();
+		if (World)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = Instigator;
+
+			ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + GetActorForwardVector() * FiringOffset, GetActorForwardVector().Rotation(), SpawnParams);
+			if (Projectile)
+			{
+				Projectile->InitVelocity(GetActorForwardVector());
+			}
+		}
+	}
 }
 
 bool ABaseShip::ServerFireWeapon_Validate()

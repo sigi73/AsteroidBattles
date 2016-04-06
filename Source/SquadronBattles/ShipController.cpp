@@ -116,5 +116,5 @@ void AShipController::TakeControlOfShip()
 void AShipController::FireWeapon()
 {
 	if (bIsControllingShip)
-		ControlledShip->FireWeapon();
+		ControlledShip->ServerFireWeapon();
 }

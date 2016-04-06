@@ -30,9 +30,6 @@ public:
 	void RollInput(float Magnitude);
 
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void FireWeapon();
-
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerFireWeapon();
 	virtual void ServerFireWeapon_Implementation();
