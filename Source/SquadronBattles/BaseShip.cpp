@@ -69,7 +69,6 @@ bool ABaseShip::ServerMoveShip_Validate(FVector LocationOffset, FRotator Rotatio
 void ABaseShip::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp,
 	bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Warning, TEXT("HITTING SOMETHING"));
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
 	// Set velocity to zero upon collision
@@ -158,7 +157,6 @@ void ABaseShip::ApplyDamage_Implementation(float Amount)
 		}
 		
 		Health -= Amount;
-		UE_LOG(LogTemp, Warning, TEXT("Applying damage: %f"), Health);
 		if (Health <= 0)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Me ded"));

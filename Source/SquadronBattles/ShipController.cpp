@@ -24,11 +24,10 @@ AShipController::AShipController()
 
 void AShipController::BeginPlay()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Beginning of begin play"));
-	ClientMessage(TEXT("Beginning of begin play"));
+	Super::BeginPlay();
+	
 	TakeControlOfShip();
-	UE_LOG(LogTemp, Warning, TEXT("End of begin play"));
-	ClientMessage(TEXT("End of begin play"));
+	
 }
 
 void AShipController::SetupInputComponent()
@@ -79,8 +78,6 @@ void AShipController::Tick(float DeltaSeconds)
 {
 	if (!bIsControllingShip)
 	{
-		ClientMessage(TEXT("Not yet controlling ship"));
-		UE_LOG(LogTemp, Warning, TEXT("Not yet controlling ship"));
 		TakeControlOfShip();
 	}
 	else
