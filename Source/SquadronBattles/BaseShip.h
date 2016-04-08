@@ -39,6 +39,9 @@ public:
 	float FiringOffset;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
+	FVector FiringTarget;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
 	TSubclassOf<class ABaseProjectile>ProjectileClass;
 
 
