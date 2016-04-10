@@ -41,6 +41,9 @@ private:
 	void AddRoll(float Magnitude);
 	void AddYaw(float Magnitude);
 
+	void VerticalInput(float Magnitude);
+	void HorizontalInput(float Magnitude);
+
 	void TakeControlOfShip();
 
 	void FireWeapon();

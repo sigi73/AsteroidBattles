@@ -38,6 +38,8 @@ void AShipController::SetupInputComponent()
 
 	InputComponent->BindAxis("Thrust", this, &AShipController::AddThrust);
 	InputComponent->BindAxis("Roll", this, &AShipController::AddRoll);
+	InputComponent->BindAxis("Vertical", this, &AShipController::VerticalInput);
+	InputComponent->BindAxis("Horizontal", this, &AShipController::HorizontalInput);
 }
 
 void AShipController::AddThrust(float Magnitude)
@@ -74,8 +76,35 @@ void AShipController::AddYaw(float Magnitude)
 }
 
 
+void AShipController::VerticalInput(float Magnitude)
+{
+	if (bIsControllingShip)
+	{
+		if (FMath::Abs(Magnitude) > MouseInputDelta)
+		{
+			AddPitch(Magnitude * MouseDeltaMultiplier);
+		}
+	}
+}
+
+void AShipController::HorizontalInput(float Magnitude)
+{
+	if (bIsControllingShip)
+	{
+		if (FMath::Abs(Magnitude) > MouseInputDelta)
+		{
+			AddYaw(Magnitude * MouseDeltaMultiplier);
+		}
+	}
+}
+
 void AShipController::Tick(float DeltaSeconds)
 {
+	if (!bIsControllingShip)
+	{
+		TakeControlOfShip();
+	}
+	/*
 	if (!bIsControllingShip)
 	{
 		TakeControlOfShip();
@@ -98,6 +127,7 @@ void AShipController::Tick(float DeltaSeconds)
 			AddPitch(DeltaY * MouseDeltaMultiplier);
 		}
 	}
+	*/
 }
 
 void AShipController::TakeControlOfShip()
