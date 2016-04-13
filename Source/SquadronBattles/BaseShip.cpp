@@ -41,7 +41,7 @@ void ABaseShip::Tick(float DeltaSeconds)
 	FRotator DeltaRotation;
 	DeltaRotation.Pitch = CurrentTurningSpeed.Pitch * DeltaSeconds;
 	DeltaRotation.Yaw = CurrentTurningSpeed.Yaw * DeltaSeconds;
-	DeltaRotation.Roll = CurrentTurningSpeed.Roll *DeltaSeconds;
+	DeltaRotation.Roll = CurrentTurningSpeed.Roll * DeltaSeconds;
 
 	MoveShip(LocalMove, DeltaRotation);
 }

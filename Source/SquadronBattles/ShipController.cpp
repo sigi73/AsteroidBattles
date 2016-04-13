@@ -84,6 +84,10 @@ void AShipController::VerticalInput(float Magnitude)
 		{
 			AddPitch(Magnitude * MouseDeltaMultiplier);
 		}
+		else
+		{
+			AddPitch(0);
+		}
 	}
 }
 
@@ -94,6 +98,10 @@ void AShipController::HorizontalInput(float Magnitude)
 		if (FMath::Abs(Magnitude) > MouseInputDelta)
 		{
 			AddYaw(Magnitude * MouseDeltaMultiplier);
+		}
+		else
+		{
+			AddYaw(0);
 		}
 	}
 }
