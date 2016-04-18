@@ -20,6 +20,8 @@ ABaseShip::ABaseShip()
 	MinSpeed = 0.0f;
 	CurrentForwardSpeed = 0.0f;
 	Health = 20;
+	CollisionTurnFactor = 1.0f;
+	BounceFactor = 1.0f;
 }
 
 void ABaseShip::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -72,7 +74,34 @@ void ABaseShip::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
 	// Set velocity to zero upon collision
-	CurrentForwardSpeed = 0.0f;
+	
+	//CurrentForwardSpeed = 0.0f;
+
+	
+	//FVector NewForward = FVector::VectorPlaneProject(GetActorForwardVector(), HitNormal);
+	//FRotator NewRotation = NewForward.Rotation();
+	//NewRotation.Roll = GetActorRotation().Roll;
+	//CurrentTurningSpeed = (NewRotation - GetActorRotation()).GetNormalized() * CollisionTurnFactor;
+	Bounce(HitNormal, BounceFactor);
+}
+
+void ABaseShip::Bounce(FVector Direction, float Magnitude)
+{
+	if (Role == ROLE_AutonomousProxy)
+	{
+		ServerBounce(Direction, Magnitude);
+	}
+	AddActorLocalOffset(Direction * Magnitude);
+}
+
+void ABaseShip::ServerBounce_Implementation(FVector Direction, float Magnitude)
+{
+	Bounce(Direction, Magnitude);
+}
+
+bool ABaseShip::ServerBounce_Validate(FVector Direction, float Magnitude)
+{
+	return true;
 }
 
 

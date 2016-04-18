@@ -57,17 +57,23 @@ public:
 	
 
 protected:
-	UPROPERTY(Category = "Movement", EditAnywhere)
+	UPROPERTY(Category = "Movement", EditAnywhere, BlueprintReadWrite)
 	float Acceleration;
 
-	UPROPERTY(Category = "Movement", EditAnywhere)
+	UPROPERTY(Category = "Movement", EditAnywhere, BlueprintReadWrite)
 	float TurnSpeed;
 
-	UPROPERTY(Category = "Movement", EditAnywhere)
+	UPROPERTY(Category = "Movement", EditAnywhere, BlueprintReadWrite)
 	float MaxSpeed;
 
-	UPROPERTY(Category = "Movement", EditAnywhere)
+	UPROPERTY(Category = "Movement", EditAnywhere, BlueprintReadWrite)
 	float MinSpeed;
+
+	UPROPERTY(Category = "Movement", EditAnywhere, BlueprintReadWrite)
+	float CollisionTurnFactor;
+
+	UPROPERTY(Category = "Movement", EditAnywhere, BlueprintReadWrite)
+	float BounceFactor;
 
 	UPROPERTY(Replicated)
 	float CurrentForwardSpeed;
@@ -75,6 +81,12 @@ protected:
 	FRotator CurrentTurningSpeed;
 	
 
+	void Bounce(FVector Direction, float Magnitude);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerBounce(FVector Direction, float Magnitude);
+	virtual void ServerBounce_Implementation(FVector Direction, float Magnitude);
+	virtual bool ServerBounce_Validate(FVector Direction, float Magnitude);
 
 	void MoveShip(FVector LocationOffset, FRotator RotationOffset);
 	
