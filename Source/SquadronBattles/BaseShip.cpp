@@ -82,6 +82,7 @@ void ABaseShip::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other
 	//FRotator NewRotation = NewForward.Rotation();
 	//NewRotation.Roll = GetActorRotation().Roll;
 	//CurrentTurningSpeed = (NewRotation - GetActorRotation()).GetNormalized() * CollisionTurnFactor;
+	
 	Bounce(HitNormal, BounceFactor);
 }
 
