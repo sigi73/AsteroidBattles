@@ -30,20 +30,50 @@ class SQUADRONBATTLES_API UBezierLoopGenerator : public UObject
 	
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Map Generation")
 	void GenerateBezierLoop();
 
+	UFUNCTION(BlueprintCallable, Category = "Debug")
+	void DebugTangents();
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FVector> BezierPoints;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 PointNum;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Radius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DeltaRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TimeStep;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FVector> CurvePoints;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FVector> IncomingCurveTangents;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FVector> OutgoingCurveTangents;
 
 private:
 
-	TArray<FVector> CurvePoints;
-	TArray<FVector> CurveTangents;
+	
 
-	int32 PointNum;
-	float Radius;
-
-	float TimeStep;
+	
 
 	void GenerateCurvePoints();
+	void GenerateTangentPoints();
+	void GenerateCurve();
 
+	FVector QuadraticCurve(float t, FVector P0, FVector P1, FVector P2);
+	FVector CubicCurve(float t, FVector P0, FVector P1, FVector P2, FVector P3);
+
+	FVector RandomTangentAtDist(FVector Point, float Dist);
+	FVector TangentColinear(FVector Point, FVector Tangent, float Dist);
 };
