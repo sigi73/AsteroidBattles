@@ -130,7 +130,57 @@ EDirectionEnum AMazeGenerator::ChooseRandomDirection(TArray<EDirectionEnum> Excl
 
 void AMazeGenerator::GenerateMeshSections()
 {
+	for (FPassage Passage : Passages)
+	{
+		for (FVector EndPoint : Passage.End)
+		{
+			//Generate the 8 verticies
+			FVector Direction = (Passage.Start - EndPoint).GetUnsafeNormal();
+			FVector Unused = GetUnusedAxes(Direction);
+			FVector Used = GetUsedAxes(Direction);
 
+			TArray<FVector> Verticies;
+			//Verticies.Add();
+		}
+	}
+}
+
+FVector AMazeGenerator::GetUsedAxes(FVector Direction)
+{
+	FVector Used = FVector::ZeroVector;
+	if (Direction.X != 0.0f)
+	{
+		Used.X = Direction.X / FMath::Abs(Direction.X);
+	}
+	if (Direction.Y != 0.0f)
+	{
+		Used.Y = Direction.Y / FMath::Abs(Direction.Y);
+	}
+	if (Direction.Z != 0.0f)
+	{
+		Used.Z = Direction.Z / FMath::Abs(Direction.Z);
+	}
+
+	return Used;
+}
+
+FVector AMazeGenerator::GetUnusedAxes(FVector Direction)
+{
+	FVector Unused = FVector::ZeroVector;
+	if (Direction.X == 0.0f)
+	{
+		Unused.X = 1.0f;
+	}
+	if (Direction.Y == 0.0f)
+	{
+		Unused.Y = 1.0f;
+	}
+	if (Direction.Z == 0.0f)
+	{
+		Unused.Z = 1.0f;
+	}
+
+	return Unused;
 }
 
 //TArray<EDirectionEnum> Exclude;

@@ -20,7 +20,7 @@ ABaseShip::ABaseShip()
 	MinSpeed = 0.0f;
 	CurrentForwardSpeed = 0.0f;
 	Health = 20;
-	CollisionTurnFactor = 1.0f;
+	CollisionDampFactor = 1.0f;
 	BounceFactor = 1.0f;
 }
 
@@ -93,6 +93,7 @@ void ABaseShip::Bounce(FVector Direction, float Magnitude)
 		ServerBounce(Direction, Magnitude);
 	}
 	AddActorLocalOffset(Direction * Magnitude);
+	CurrentForwardSpeed = CurrentForwardSpeed * CollisionDampFactor;
 }
 
 void ABaseShip::ServerBounce_Implementation(FVector Direction, float Magnitude)

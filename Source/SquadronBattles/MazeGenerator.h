@@ -77,5 +77,9 @@ private:
 
 	void AddEndPoints();
 	EDirectionEnum ChooseRandomDirection(TArray<EDirectionEnum> Exclude);
+	
 	void GenerateMeshSections();
+	FVector GetUsedAxes(FVector Direction);
+	FVector GetUnusedAxes(FVector Direction);
+
 };

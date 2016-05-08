@@ -70,7 +70,7 @@ protected:
 	float MinSpeed;
 
 	UPROPERTY(Category = "Movement", EditAnywhere, BlueprintReadWrite)
-	float CollisionTurnFactor;
+	float CollisionDampFactor;
 
 	UPROPERTY(Category = "Movement", EditAnywhere, BlueprintReadWrite)
 	float BounceFactor;
