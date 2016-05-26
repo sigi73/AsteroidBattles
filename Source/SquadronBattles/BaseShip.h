@@ -97,4 +97,7 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Ship")
 	float Health;
+
+private:
+	FDateTime TempDateTime;
 };

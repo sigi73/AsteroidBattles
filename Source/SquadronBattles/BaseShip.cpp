@@ -22,6 +22,8 @@ ABaseShip::ABaseShip()
 	Health = 20;
 	CollisionDampFactor = 1.0f;
 	BounceFactor = 1.0f;
+
+	TempDateTime = FDateTime();
 }
 
 void ABaseShip::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -82,7 +84,7 @@ void ABaseShip::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other
 	//FRotator NewRotation = NewForward.Rotation();
 	//NewRotation.Roll = GetActorRotation().Roll;
 	//CurrentTurningSpeed = (NewRotation - GetActorRotation()).GetNormalized() * CollisionTurnFactor;
-	
+
 	Bounce(HitNormal, BounceFactor);
 }
 
