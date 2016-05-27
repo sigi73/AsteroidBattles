@@ -30,6 +30,12 @@ public:
 	void RollInput(float Magnitude);
 
 
+	UFUNCTION(Category = "Weapon")
+	void ShouldFireWeapon();
+	
+	UFUNCTION(Category = "Weapon")
+	void ShouldStopFiringWeapon();
+
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerFireWeapon();
 	virtual void ServerFireWeapon_Implementation();
@@ -54,7 +60,8 @@ public:
 	virtual void ServerApplyDamage_Implementation(float Amount);
 	virtual bool ServerApplyDamage_Validate(float Amount);
 	
-	
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	float GetCooldown();
 
 protected:
 	UPROPERTY(Category = "Movement", EditAnywhere, BlueprintReadWrite)
@@ -98,6 +105,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Ship")
 	float Health;
 
-private:
-	FDateTime TempDateTime;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
+	float CurrentCooldown;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
+	bool bShouldFire;
 };

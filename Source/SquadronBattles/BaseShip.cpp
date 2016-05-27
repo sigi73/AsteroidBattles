@@ -22,8 +22,8 @@ ABaseShip::ABaseShip()
 	Health = 20;
 	CollisionDampFactor = 1.0f;
 	BounceFactor = 1.0f;
+	CurrentCooldown = 0.0f;
 
-	TempDateTime = FDateTime();
 }
 
 void ABaseShip::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -48,6 +48,23 @@ void ABaseShip::Tick(float DeltaSeconds)
 	DeltaRotation.Roll = CurrentTurningSpeed.Roll * DeltaSeconds;
 
 	MoveShip(LocalMove, DeltaRotation);
+
+	if (CurrentCooldown > 0.0f)
+	{
+		CurrentCooldown -= DeltaSeconds;
+	}
+	else
+	{
+		if (bShouldFire)
+		{
+			ServerFireWeapon();
+		}
+	}
+}
+
+float ABaseShip::GetCooldown()
+{
+	return CurrentCooldown;
 }
 
 void ABaseShip::MoveShip(FVector LocationOffset, FRotator RotationOffset)
@@ -147,27 +164,40 @@ void ABaseShip::RollInput(float Magnitude)
 }
 
 
+void ABaseShip::ShouldFireWeapon()
+{
+	bShouldFire = true;
+}
+
+void ABaseShip::ShouldStopFiringWeapon()
+{
+	bShouldFire = false;
+}
 
 void ABaseShip::ServerFireWeapon_Implementation()
 {
-	if (ProjectileClass != NULL)
+	if (CurrentCooldown <= 0.0f)
 	{
-		UWorld* const World = GetWorld();
-		if (World)
+		if (ProjectileClass != NULL)
 		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			SpawnParams.Instigator = Instigator;
-
-			FRotator WeaponDirection = (FiringTarget - (GetActorLocation() + GetActorForwardVector() * FiringOffset)).Rotation();
-
-			ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + GetActorForwardVector() * FiringOffset, WeaponDirection, SpawnParams);
-			if (Projectile)
+			UWorld* const World = GetWorld();
+			if (World)
 			{
-				Projectile->InitVelocity(WeaponDirection.Vector());
+				FActorSpawnParameters SpawnParams;
+				SpawnParams.Owner = this;
+				SpawnParams.Instigator = Instigator;
+
+				FRotator WeaponDirection = (FiringTarget - (GetActorLocation() + GetActorForwardVector() * FiringOffset)).Rotation();
+
+				ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + GetActorForwardVector() * FiringOffset, WeaponDirection, SpawnParams);
+				if (Projectile)
+				{
+					Projectile->InitVelocity(WeaponDirection.Vector());
+				}
+				CurrentCooldown = Projectile->Cooldown;
 			}
 		}
-	}
+	}	
 }
 
 bool ABaseShip::ServerFireWeapon_Validate()

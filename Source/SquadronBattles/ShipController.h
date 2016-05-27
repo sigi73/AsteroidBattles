@@ -47,4 +47,5 @@ private:
 	void TakeControlOfShip();
 
 	void FireWeapon();
+	void StopFiring();
 };

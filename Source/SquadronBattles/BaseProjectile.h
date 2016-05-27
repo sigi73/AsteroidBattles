@@ -22,6 +22,8 @@ public:
 
 	void InitVelocity(FVector ShootDirection);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Firing)
+	float Cooldown; //Seconds
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
 	UProjectileMovementComponent* ProjectileMovement;

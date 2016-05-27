@@ -35,6 +35,7 @@ void AShipController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	InputComponent->BindAction("Fire", IE_Pressed, this, &AShipController::FireWeapon);
+	InputComponent->BindAction("Fire", IE_Released, this, &AShipController::StopFiring);
 
 	InputComponent->BindAxis("Thrust", this, &AShipController::AddThrust);
 	InputComponent->BindAxis("Roll", this, &AShipController::AddRoll);
@@ -151,5 +152,11 @@ void AShipController::TakeControlOfShip()
 void AShipController::FireWeapon()
 {
 	if (bIsControllingShip)
-		ControlledShip->ServerFireWeapon();
+		ControlledShip->ShouldFireWeapon();
+}
+
+void AShipController::StopFiring()
+{
+	if (bIsControllingShip)
+		ControlledShip->ShouldStopFiringWeapon();
 }
