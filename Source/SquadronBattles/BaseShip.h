@@ -61,7 +61,10 @@ public:
 	virtual bool ServerApplyDamage_Validate(float Amount);
 	
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	float GetCooldown();
+	float GetCurrentCooldown();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	float GetMaxCooldown();
 
 protected:
 	UPROPERTY(Category = "Movement", EditAnywhere, BlueprintReadWrite)

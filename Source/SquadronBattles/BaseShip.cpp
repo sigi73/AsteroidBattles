@@ -62,9 +62,15 @@ void ABaseShip::Tick(float DeltaSeconds)
 	}
 }
 
-float ABaseShip::GetCooldown()
+float ABaseShip::GetCurrentCooldown()
 {
 	return CurrentCooldown;
+}
+
+float ABaseShip::GetMaxCooldown()
+{
+	ABaseProjectile* Projectile = Cast<ABaseProjectile>(ProjectileClass->GetDefaultObject());
+	return Projectile->Cooldown;
 }
 
 void ABaseShip::MoveShip(FVector LocationOffset, FRotator RotationOffset)
