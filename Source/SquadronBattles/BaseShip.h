@@ -66,6 +66,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	float GetMaxCooldown();
 
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void FlyToLocation(FVector Location);
+
 protected:
 	UPROPERTY(Category = "Movement", EditAnywhere, BlueprintReadWrite)
 	float Acceleration;
@@ -113,4 +116,6 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Weapon")
 	bool bShouldFire;
+
+	bool bHasFlightTarget;
 };

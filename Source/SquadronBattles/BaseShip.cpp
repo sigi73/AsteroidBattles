@@ -42,11 +42,8 @@ void ABaseShip::Tick(float DeltaSeconds)
 
 	const FVector LocalMove = FVector(CurrentForwardSpeed * DeltaSeconds, 0.0f, 0.0f);
 
-	FRotator DeltaRotation;
-	DeltaRotation.Pitch = CurrentTurningSpeed.Pitch * DeltaSeconds;
-	DeltaRotation.Yaw = CurrentTurningSpeed.Yaw * DeltaSeconds;
-	DeltaRotation.Roll = CurrentTurningSpeed.Roll * DeltaSeconds;
-
+	FRotator DeltaRotation = CurrentTurningSpeed * DeltaSeconds;
+	
 	MoveShip(LocalMove, DeltaRotation);
 
 	if (CurrentCooldown > 0.0f)
@@ -97,16 +94,6 @@ void ABaseShip::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other
 	bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-
-	// Set velocity to zero upon collision
-	
-	//CurrentForwardSpeed = 0.0f;
-
-	
-	//FVector NewForward = FVector::VectorPlaneProject(GetActorForwardVector(), HitNormal);
-	//FRotator NewRotation = NewForward.Rotation();
-	//NewRotation.Roll = GetActorRotation().Roll;
-	//CurrentTurningSpeed = (NewRotation - GetActorRotation()).GetNormalized() * CollisionTurnFactor;
 
 	Bounce(HitNormal, BounceFactor);
 }
@@ -245,4 +232,10 @@ void ABaseShip::ServerApplyDamage_Implementation(float Amount)
 bool ABaseShip::ServerApplyDamage_Validate(float Amount)
 {
 	return true;
+}
+
+
+void ABaseShip::FlyToLocation(FVector Location)
+{
+
 }
