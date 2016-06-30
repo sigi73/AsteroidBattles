@@ -2,6 +2,7 @@
 
 #include "SquadronBattles.h"
 #include "ICursor.h"
+#include "IHeadMountedDisplay.h"
 #include "ShipController.h"
 
 

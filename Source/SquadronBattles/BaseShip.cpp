@@ -180,9 +180,9 @@ void ABaseShip::ServerFireWeapon_Implementation()
 				SpawnParams.Owner = this;
 				SpawnParams.Instigator = Instigator;
 
-				FRotator WeaponDirection = (FiringTarget - (GetActorLocation() + GetActorForwardVector() * FiringOffset)).Rotation();
+				FRotator WeaponDirection = (FiringTarget - FiringSource).Rotation();
 
-				ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, GetActorLocation() + GetActorForwardVector() * FiringOffset, WeaponDirection, SpawnParams);
+				ABaseProjectile* const Projectile = World->SpawnActor<ABaseProjectile>(ProjectileClass, FiringSource, WeaponDirection, SpawnParams);
 				if (Projectile)
 				{
 					Projectile->InitVelocity(WeaponDirection.Vector());
