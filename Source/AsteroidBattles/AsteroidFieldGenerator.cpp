@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AsteroidBattles.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "AsteroidFieldGenerator.h"
 
 
@@ -13,7 +14,10 @@ AAsteroidFieldGenerator::AAsteroidFieldGenerator()
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	RootComponent = BoxComponent;
 
+	MovementForce = 100.0f;
 
+	MinScale = 1.0f;
+	MaxScale = 1.0f;
 }
 
 // Called when the game starts or when spawned
@@ -36,11 +40,12 @@ void AAsteroidFieldGenerator::Tick( float DeltaTime )
 void AAsteroidFieldGenerator::RemoveAsteroids()
 {
 	FBox Box = BoxComponent->CalcBounds(GetTransform()).GetBox();
-	for (AActor* Asteroid : Asteroids)
+	for (int i = 0; i < Asteroids.Num(); i++)
 	{
-		if (!Box.IsInsideOrOn(Asteroid->GetActorLocation()))
+		if (!Box.IsInsideOrOn(Asteroids[i]->GetActorLocation()))
 		{
-			Asteroids.Remove(Asteroid);
+			AGenericAsteroid* Asteroid = Asteroids[i];
+			Asteroids.RemoveAt(Asteroids.Find(Asteroid));
 			Asteroid->Destroy();
 		}
 			
@@ -94,14 +99,24 @@ void AAsteroidFieldGenerator::AddAsteroids()
 			default:
 				Location.X += FMath::RandRange(-Extents.X / 2.0f, Extents.X / 2.0f);
 				Location.Y += FMath::RandRange(-Extents.Y / 2.0f, Extents.Y / 2.0f);
-				Location.Z -= Extents.Z / 2.0f;
+				Location.Z -= Extents.Z;
 				ForceDirection = FVector(0, 0, 1);
 				break;
 		}
 		
 		
-		AActor* NewAsteroid = GetWorld()->SpawnActor(AsteroidClasses[FMath::RandRange(0, AsteroidClasses.Num() - 1)]);
-		NewAsteroid->SetActorLocation(Location);
-		Asteroids.Add(NewAsteroid);
+		AGenericAsteroid* NewAsteroid = Cast<AGenericAsteroid>(GetWorld()->SpawnActor(AsteroidClasses[FMath::RandRange(0, AsteroidClasses.Num() - 1)]));
+		if (NewAsteroid)
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("Direction: %s"), *ForceDirection.ToString());
+			NewAsteroid->SetActorLocation(Location);
+			float NewScaleMultiplier = FMath::FRandRange(MinScale, MaxScale);
+			FVector NewScale = FVector(NewScaleMultiplier);
+			NewAsteroid->SetScale(NewScale);
+			NewAsteroid->AsteroidMesh->AddRelativeRotation(UKismetMathLibrary::RandomRotator(true));
+			//NewAsteroid->Move(ForceDirection, 10000000.0f);
+			NewAsteroid->Move(ForceDirection, MovementForce);
+			Asteroids.Add(NewAsteroid);
+		}
 	}
 }

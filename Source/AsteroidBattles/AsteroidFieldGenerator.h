@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "GenericAsteroid.h"
 #include "AsteroidFieldGenerator.generated.h"
 
 UCLASS()
@@ -24,13 +25,22 @@ public:
 	UBoxComponent* BoxComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<AActor*> Asteroids;
+	TArray<AGenericAsteroid*> Asteroids;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UClass*> AsteroidClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 AsteroidNum;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MovementForce;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MinScale;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MaxScale;
 
 private:
 	void RemoveAsteroids();
